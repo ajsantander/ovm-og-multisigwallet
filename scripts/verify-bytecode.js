@@ -40,21 +40,20 @@ function _getLocalBytecode({ contractName }) {
 		fs.readFileSync(`./build/contracts/ovm/${contractName}.json`, 'utf8')
 	);
 
-	return artifacts.deployedBytecode;
+	// Because https://github.com/ethereum-optimism/solidity/issues/21
+	return artifacts.deployedBytecode
+		.split(
+			'336000905af158601d01573d60011458600c01573d6000803e3d621234565260ea61109c52'
+		)
+		.join(
+			'336000905af158600e01573d6000803e3d6000fd5b3d6001141558600a015760016000f35b'
+		);
 }
 
 async function _getRemoteBytecode({ network, contractAddress }) {
 	const provider = _getOptimismProvider({ network });
 
-	const code = await provider.getCode(contractAddress);
-
-	return code
-		.split(
-			'336000905af158600e01573d6000803e3d6000fd5b3d6001141558600a015760016000f35b'
-		)
-		.join(
-			'336000905af158601d01573d60011458600c01573d6000803e3d621234565260ea61109c52'
-		);
+	return await provider.getCode(contractAddress);
 }
 
 function _getOptimismProvider({ network }) {
