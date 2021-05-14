@@ -82,5 +82,3 @@ module.exports = {
 				}
 			}),
 };
-
-program.parse(process.argv);
